@@ -1,0 +1,28 @@
+let 
+    GetSalesByColor = (date_from as date, date_to as date) =>
+    let 
+        isoDateFrom = Date.ToText(date_from, "yyyy-MM-dd"),
+        isoDateTo = Date.ToText(date_to, "yyyy-MM-dd"),
+        url = "http://localhost:8080/sales_by_color_ranked?date_from=" & isoDateFrom & "&date_to=" & isoDateTo,
+
+        response = try Web.Contents(url) otherwise null,
+        jsonResponse = if response <> null then Json.Document(response) else null,
+        salesByColorTable = if jsonResponse <> null then Table.FromRecords(jsonResponse) else null,
+        
+        salesByColorTyped = if salesByColorTable <> null then Table.TransformColumnTypes(salesByColorTable, {
+            {"brew_color", type text},
+            {"beer_style", type text},
+            {"location", type text},
+            {"total_sales", Currency.Type},
+            {"ranked", Int32.Type} 
+        }) else null,
+        
+        rankedTable = Table.SelectRows(salesByColorTyped, each ([ranked] = 1 or [ranked] = 2 or [ranked] = 3)),
+        indexForSort = Table.AddIndexColumn(rankedTable, "Index", 1, 1, Int64.Type)
+    in
+        indexForSort,
+        
+    Output = GetSalesByColor(#date(2020, 01, 01), #date(2020, 03, 01))
+    
+in
+    Output
