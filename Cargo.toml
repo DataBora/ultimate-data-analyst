@@ -1,0 +1,20 @@
+[package]
+name = "ultimate-data-analyst"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4.4.1"
+json = "0.12.4"
+mysql_async = "0.34.0"
+serde = {version = "1.0.195", features = ["derive"]}
+validator = {version = "0.17.0", features = ["derive"]}
+chrono = {version ="0.4.34", features = ["serde"]}
+tokio = { version = "1.0", features = ["full"] }
+dotenv = "0.15.0"
+
+[dependencies.mysql_common]
+version = "*"
+features = ["chrono"]
